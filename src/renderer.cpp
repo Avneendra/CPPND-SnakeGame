@@ -31,6 +31,23 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
+
+  // Initialize font
+  if (TTF_Init() < 0) 
+  {
+    std::cerr << "SDL Font could not initialize.\n";
+    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+  }
+
+  // Load font
+  sdl_font = TTF_OpenFont("../font.ttf", 50);
+  if(nullptr == sdl_font) {
+    std::cerr << "SDL Font could not loaded.\n";
+    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+  }
+
+  // Start sending SDL_TextInput events
+  SDL_StartTextInput();
 }
 
 Renderer::~Renderer() {

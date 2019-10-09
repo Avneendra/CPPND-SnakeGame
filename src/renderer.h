@@ -4,6 +4,7 @@
 #include <vector>
 #include "SDL.h"
 #include "snake.h"
+#include "SDL_ttf.h"
 
 class Renderer {
  public:
@@ -17,6 +18,7 @@ class Renderer {
  private:
   SDL_Window *sdl_window;
   SDL_Renderer *sdl_renderer;
+  TTF_Font *sdl_font;
 
   const std::size_t screen_width;
   const std::size_t screen_height;
