@@ -1,7 +1,5 @@
 #ifndef PlayerInfo_H
 #define PlayerInfo_H
-#include "SDL.h"
-#include "SDL_ttf.h"
 #include <string>
 
 //The key press interpreter

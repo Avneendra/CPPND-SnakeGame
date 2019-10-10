@@ -12,6 +12,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_w
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
+               PlayerInfo  &player,
                std::size_t target_frame_duration) {
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
@@ -25,7 +26,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   {
     frame_start = SDL_GetTicks();
     controller.HandleInput(returnKey, running);
-    std::string welcomeMsg = "Hello, Avneendra! Press Enter to start game, Esc to quit.";
+    std::string welcomeMsg = "Hello, " + player.GetPlayerName() + "! Press Enter to start game, Esc to quit.";
     renderer.Render(welcomeMsg);
     frame_end = SDL_GetTicks();
 
@@ -36,7 +37,6 @@ void Game::Run(Controller const &controller, Renderer &renderer,
       SDL_Delay(target_frame_duration - frame_duration);
     }
   }
-
   
   while (running) 
   {

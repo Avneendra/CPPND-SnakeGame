@@ -6,6 +6,7 @@
 #include "controller.h"
 #include "renderer.h"
 #include "snake.h"
+#include "playerInfo.h"
 
 class Game {
  public:
@@ -16,6 +17,7 @@ class Game {
   
   void Run(Controller const &controller, 
            Renderer         &renderer,
+           PlayerInfo       &player,
            std::size_t      target_frame_duration);
   
   int GetScore() const;

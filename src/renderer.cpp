@@ -2,6 +2,22 @@
 #include <iostream>
 #include <string>
 #include "SDL_ttf.h"
+#include "cleanup.h"
+
+/*
+ * Log an SDL error with some error message to the output stream of our choice
+ * @param os The output stream to write the message too
+ * @param msg The error message to write, format will be msg error: SDL_GetError()
+ */
+void logSDLError(std::ostream &os, const std::string &msg)
+{
+  os << msg << " error: " << SDL_GetError() << std::endl;
+}
+
+void logTTFError(std::ostream &os, const std::string &msg)
+{
+  os << msg << " error: " << TTF_GetError() << std::endl;
+}
 
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
@@ -12,8 +28,7 @@ Renderer::Renderer(const std::size_t screen_width,
       grid_height(grid_height) {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cerr << "SDL could not initialize.\n";
-    std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+    logSDLError(std::cerr, "SDL could not initialize");
   }
 
   // Create Window
@@ -22,22 +37,23 @@ Renderer::Renderer(const std::size_t screen_width,
                                 screen_height, SDL_WINDOW_SHOWN);
 
   if (nullptr == sdl_window) {
-    std::cerr << "Window could not be created.\n";
-    std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
+    logSDLError(std::cerr, "Window could not be created.");
+    SDL_Quit();
   }
 
   // Create renderer
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_SOFTWARE);
   if (nullptr == sdl_renderer) {
-    std::cerr << "Renderer could not be created.\n";
-    std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+    logSDLError(std::cerr, "Renderer could not be created.");
+    cleanup(sdl_window);
+    SDL_Quit();
   }
 
   // Initialize font
   if (TTF_Init() < 0) 
   {
-    std::cerr << "SDL Font could not initialize.\n";
-    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+    logTTFError(std::cerr, "TTF couldn't be initialized");
+    SDL_Quit();
   }
 
 }
@@ -45,6 +61,7 @@ Renderer::Renderer(const std::size_t screen_width,
 Renderer::~Renderer() {
   SDL_DestroyWindow(sdl_window);
   SDL_Quit();
+  TTF_Quit();
 }
 
 void Renderer::Render(Snake const snake, SDL_Point const &food) {
@@ -94,32 +111,30 @@ void Renderer::Render(std::string &text)
       // Load font
     sdl_font = TTF_OpenFont("../font.ttf", 20);
     if(nullptr == sdl_font) {
-      std::cerr << "SDL Font could not loaded.\n";
-      std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+      logTTFError(std::cout, "TTF_OpenFont");
       return;
     }
     SDL_Color White = {255, 255, 255, 0};
     SDL_Surface *screen = SDL_GetWindowSurface(sdl_window);
-
-    if(screen == nullptr)
-    {
-        std::cerr << "SDL WindowSurface error\n";
-        std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+    if(screen == nullptr){
+        logSDLError(std::cerr, "SDL WindowSurface error");
+        TTF_CloseFont(sdl_font);
         return;
     }
     SDL_Surface *message   = TTF_RenderText_Blended(sdl_font, text.c_str(), White);
     if(message == nullptr)
     {
-        std::cerr << "TTF_RenderText_Solid error\n";
-        std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+        logTTFError(std::cerr, "TTF_RenderText");
+        TTF_CloseFont(sdl_font);
         return;
     }
 
     SDL_Texture *texture = SDL_CreateTextureFromSurface(sdl_renderer, message);
     if(texture == nullptr)
     {
-        std::cerr << "SDL_CreateTextureFromSurface error\n";
-        std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+        logSDLError(std::cerr, "CreateTexture");
+        TTF_CloseFont(sdl_font);
+        SDL_FreeSurface(message);
         return;
     }
     SDL_FreeSurface(message);
