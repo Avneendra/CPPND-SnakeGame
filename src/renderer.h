@@ -2,6 +2,7 @@
 #define RENDERER_H
 
 #include <vector>
+#include <string>
 #include "SDL.h"
 #include "snake.h"
 #include "SDL_ttf.h"
@@ -14,11 +15,15 @@ class Renderer {
 
   void Render(Snake const snake, SDL_Point const &food);
   void UpdateWindowTitle(int score, int fps);
+  void Render(std::string &text);
 
  private:
-  SDL_Window *sdl_window;
-  SDL_Renderer *sdl_renderer;
-  TTF_Font *sdl_font;
+  void renderTexture(SDL_Texture *tex, SDL_Rect dst, SDL_Rect *clip = nullptr);
+  void renderTexture(SDL_Texture *tex, int x, int y, SDL_Rect *clip = nullptr);
+
+  SDL_Window   *sdl_window = nullptr;
+  SDL_Renderer *sdl_renderer = nullptr;
+  TTF_Font *sdl_font = nullptr;
 
   const std::size_t screen_width;
   const std::size_t screen_height;

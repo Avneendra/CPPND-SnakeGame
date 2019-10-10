@@ -1,6 +1,7 @@
 #include "renderer.h"
 #include <iostream>
 #include <string>
+#include "SDL_ttf.h"
 
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
@@ -26,7 +27,7 @@ Renderer::Renderer(const std::size_t screen_width,
   }
 
   // Create renderer
-  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
+  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_SOFTWARE);
   if (nullptr == sdl_renderer) {
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
@@ -39,15 +40,6 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
   }
 
-  // Load font
-  sdl_font = TTF_OpenFont("../font.ttf", 50);
-  if(nullptr == sdl_font) {
-    std::cerr << "SDL Font could not loaded.\n";
-    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
-  }
-
-  // Start sending SDL_TextInput events
-  SDL_StartTextInput();
 }
 
 Renderer::~Renderer() {
@@ -95,4 +87,75 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
 void Renderer::UpdateWindowTitle(int score, int fps) {
   std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
+}
+
+void Renderer::Render(std::string &text)
+{
+      // Load font
+    sdl_font = TTF_OpenFont("../font.ttf", 20);
+    if(nullptr == sdl_font) {
+      std::cerr << "SDL Font could not loaded.\n";
+      std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+      return;
+    }
+    SDL_Color White = {255, 255, 255, 0};
+    SDL_Surface *screen = SDL_GetWindowSurface(sdl_window);
+
+    if(screen == nullptr)
+    {
+        std::cerr << "SDL WindowSurface error\n";
+        std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+        return;
+    }
+    SDL_Surface *message   = TTF_RenderText_Blended(sdl_font, text.c_str(), White);
+    if(message == nullptr)
+    {
+        std::cerr << "TTF_RenderText_Solid error\n";
+        std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+        return;
+    }
+
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(sdl_renderer, message);
+    if(texture == nullptr)
+    {
+        std::cerr << "SDL_CreateTextureFromSurface error\n";
+        std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+        return;
+    }
+    SDL_FreeSurface(message);
+    TTF_CloseFont(sdl_font);
+
+    //Get the texture w/h so we can center it in the screen
+    int iW, iH;
+    SDL_QueryTexture(texture, NULL, NULL, &iW, &iH);
+    int x = screen->w/2- iW / 2;
+    int y = screen->h/2 - iH / 2;
+
+    SDL_RenderClear(sdl_renderer);
+    //We can draw our message as we do any other texture, since it's been
+    //rendered to a texture
+    renderTexture(texture, x, y);
+    SDL_RenderPresent(sdl_renderer);
+}
+
+void Renderer::renderTexture(SDL_Texture *tex, int x, int y, SDL_Rect *clip)
+{
+  SDL_Rect dst;
+  dst.x = x;
+  dst.y = y;
+  if (clip != nullptr)
+  {
+    dst.w = clip->w;
+    dst.h = clip->h;
+  }
+  else 
+  {
+    SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+  }
+  renderTexture(tex, dst, clip);
+}
+
+void Renderer::renderTexture(SDL_Texture *tex, SDL_Rect dst, SDL_Rect *clip)
+{
+  SDL_RenderCopy(sdl_renderer, tex, clip, &dst);
 }

@@ -7,6 +7,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_w
       engine(dev()),
       random_w(0, static_cast<int>(screen_width/grid_width)),
       random_h(0, static_cast<int>(screen_height/grid_height)) {
+
   PlaceFood();
 }
 
@@ -18,8 +19,27 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
+  bool returnKey = false;
 
-  while (running) {
+  while(!returnKey && running)
+  {
+    frame_start = SDL_GetTicks();
+    controller.HandleInput(returnKey, running);
+    std::string welcomeMsg = "Hello, Avneendra! Press Enter to start game, Esc to quit.";
+    renderer.Render(welcomeMsg);
+    frame_end = SDL_GetTicks();
+
+    frame_count++;
+    frame_duration = frame_end - frame_start;
+
+    if (frame_duration < target_frame_duration) {
+      SDL_Delay(target_frame_duration - frame_duration);
+    }
+  }
+
+  
+  while (running) 
+  {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.

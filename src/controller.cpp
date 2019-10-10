@@ -39,3 +39,18 @@ void Controller::HandleInput(bool &running, Snake &snake) const {
     }
   }
 }
+
+void Controller::HandleInput(bool &returnKey, bool &running) const
+{
+    SDL_Event e;
+    // While there's events to handle
+
+    while(SDL_PollEvent(&e))
+    {
+        if (e.type == SDL_QUIT)  running = false;
+
+        if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)  running = false;     
+
+        if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)  returnKey = true;
+    }
+}
