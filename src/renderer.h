@@ -14,8 +14,8 @@ class Renderer {
   ~Renderer();
 
   void Render(Snake const snake, SDL_Point const &food);
-  void UpdateWindowTitle(int score, int fps);
-  void Render(std::string &text);
+  void UpdateWindowTitle(unsigned int score, int fps);
+  void Render(std::string &text, int fontSize);
 
  private:
   void renderTexture(SDL_Texture *tex, SDL_Rect dst, SDL_Rect *clip = nullptr);

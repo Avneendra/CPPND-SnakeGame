@@ -2,8 +2,9 @@
 #include <iostream>
 #include "SDL.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_width, std::size_t screen_height)
+Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_width, std::size_t screen_height, std::string &playerName)
     : snake(grid_width, grid_height),
+      playerInfo(playerName, 0),
       engine(dev()),
       random_w(0, static_cast<int>(screen_width/grid_width)),
       random_h(0, static_cast<int>(screen_height/grid_height)) {
@@ -12,7 +13,6 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_w
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
-               PlayerInfo  &player,
                std::size_t target_frame_duration) {
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
@@ -22,21 +22,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   bool running = true;
   bool returnKey = false;
 
-  while(!returnKey && running)
-  {
-    frame_start = SDL_GetTicks();
-    controller.HandleInput(returnKey, running);
-    std::string welcomeMsg = "Hello, " + player.GetPlayerName() + "! Press Enter to start game, Esc to quit.";
-    renderer.Render(welcomeMsg);
-    frame_end = SDL_GetTicks();
-
-    frame_count++;
-    frame_duration = frame_end - frame_start;
-
-    if (frame_duration < target_frame_duration) {
-      SDL_Delay(target_frame_duration - frame_duration);
-    }
-  }
+  std::string msg = "Hello, " + playerInfo.GetPlayerName() + "! Press Enter to start game, Esc to quit.";
+  DisplayScreen(controller, renderer, msg, running, returnKey, target_frame_duration);
   
   while (running) 
   {
@@ -47,6 +34,14 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     Update();
     renderer.Render(snake, food);
 
+    if(!running || !snake.alive)
+    {
+      msg = "Your score is " + std::to_string(GetScore()) + ".High score is 25 by sdhghjhjh. Press Enter to play again, Esc to quit.";
+      returnKey = false;
+      running = true;
+      DisplayScreen(controller, renderer, msg, running, returnKey, target_frame_duration, 15);
+    }
+
     frame_end = SDL_GetTicks();
 
     // Keep track of how long each loop through the input/update/render cycle
@@ -56,7 +51,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score, frame_count);
+      renderer.UpdateWindowTitle(GetScore(), frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -85,6 +80,30 @@ void Game::PlaceFood() {
   }
 }
 
+void Game::DisplayScreen(Controller const &controller, Renderer &renderer,
+                         std::string &message,  bool &running, bool &returnKey,
+                         std::size_t target_frame_duration, int fontSize)
+{
+  Uint32 frame_start;
+  Uint32 frame_end;
+  Uint32 frame_duration;
+
+  while(!returnKey && running)
+  {
+
+    frame_start = SDL_GetTicks();
+    controller.HandleInput(returnKey, running);
+    renderer.Render(message, fontSize);
+    frame_end = SDL_GetTicks();
+
+    frame_duration = frame_end - frame_start;
+
+    if (frame_duration < target_frame_duration) {
+      SDL_Delay(target_frame_duration - frame_duration);
+    }
+  }
+}
+
 void Game::Update() {
   if (!snake.alive) return;
 
@@ -95,7 +114,7 @@ void Game::Update() {
 
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
-    score++;
+    playerInfo.IncrementPlayerScore();
     PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
@@ -103,5 +122,5 @@ void Game::Update() {
   }
 }
 
-int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
+unsigned int Game::GetScore() const { return playerInfo.GetPlayerScore(); }
+int Game::GetSize() const  { return  snake.size; }

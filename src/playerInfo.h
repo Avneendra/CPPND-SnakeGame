@@ -1,14 +1,14 @@
-#ifndef PlayerInfo_H
-#define PlayerInfo_H
+#ifndef PlayersInfo_H
+#define PlayersInfo_H
 #include <string>
 
 //The key press interpreter
-class PlayerInfo
+class PlayersInfo
 {
 
     public:
     	//Initializes variables
-    	PlayerInfo() : _playerName("") { }
+    	PlayersInfo() : _playerName("") { }
 
     	//Does clean up
     	//~PlayerInfo();
