@@ -1,12 +1,15 @@
 # CPPND: Capstone Snake Game
 
-This repo is extension of starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
+This repo is an extension of starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). This repo has added features such as taking user input, storing high score in a text file, displaying different screens (Welcome and exit), ability to quit game or play again using keyboard input.
 
 <img src="snake_game.gif"/>
 
-The Capstone Project gives you a chance to integrate what you've learned throughout this program. This project will become an important part of your portfolio to share with current and future colleagues and employers.
-
-In this project, you can build your own C++ application or extend this Snake game, following the principles you have learned throughout this Nanodegree Program. This project will demonstrate that you can independently create applications using a wide range of C++ features.
+## User Interaction
+- When you run the application, a user input is asked to enter your name.
+- Welcome screen is displayed where user can either press `Return` key to start snake game or `Escape` key to quit.
+- A game ends when either snake dies or user presses `Escape` at any point of time.
+- An Exit screen is displayed with your game score and highest score and scorer name. User can press `Return` key to play game again or `Escape` key to quit.
+- Highest score and scorer in the game is stored in `dataLogger.txt` file under build directory. 
 
 ## Dependencies for Running Locally
 * cmake >= 3.7
@@ -36,3 +39,31 @@ In this project, you can build your own C++ application or extend this Snake gam
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./SnakeGame`.
+
+## Project Criteria
+
+### Loops, Functions, I/O
+
+| _Criteria_                                                                                     	| _Comments_                                                                                                   	| 
+|:-----------------------------------------------------------------------------------------------	|:-------------------------------------------------------------------------------------------------------------------------	|
+| The project demonstrates an understanding of C++ functions and control structures.             	| A variety of control structures are used in the project.<br><br>The project code is clearly organized into functions. Please check all files under `src` directory.    | 
+| The project reads data from a file and process the data, or the program writes data to a file. 	| File `playerInfo.cpp` in the project writes `dataLogger.txt` file under build directory which stores high score and scorer name in the file.  	|
+| The project accepts user input and processes the input.                                        	| File `main.cpp` accepts playerName as user input and uses that through the code structure.
+
+### Object Oriented Programming
+
+| _Criteria_                                                                                     	| _Comments_                                                                                                   	| 
+|:-----------------------------------------------------------------------------------------------	|:-------------------------------------------------------------------------------------------------------------------------	|
+| The project uses Object Oriented Programming techniques.                            | The project code is organized into classes with class attributes to hold the data, and class methods to perform tasks.
+| Classes use appropriate access specifiers for class members.                     	| All class data members are explicitly specified as public, protected, or private.
+| Class constructors utilize member initialization lists.                          	| All class members that are set to argument values are initialized through member initialization lists.   Examples such as `player.cpp`, `game.cpp`, `snake.h`.
+| Classes encapsulate behavior.                                                    	| Appropriate data and functions are grouped into classes. Member data that is subject to an invariant is hidden from the user. State is accessed via member functions. Refer `player.h`, `game.h`.
+| Overloaded functions allow the same function to operate on different parameters. 	| `Controller.h` has `HandleInput` function which is overloaded. `Render.h` has `Render()` and `renderTexture()` functions overloaded. 
+| Templates generalize functions in the project.                                   	| File `cleanup.h` has `cleanup` functions that used template
+
+### Memory Management
+
+| _Criteria_                                                                       	| _Comments_
+|:-----------------------------------------------------------------------------------------------	|:-------------------------------------------------------------------------------------------------------------------------	|
+| The project makes use of references in function declarations.                             	| At least two variables are defined as references, or two functions use pass-by-reference in the project code. One of the many examples is in `controller.h` file  |
+| The project uses destructors appropriately.                                               	| `Renderer` class in `renderer.h` has destructor.| 
