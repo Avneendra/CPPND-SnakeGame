@@ -14,6 +14,6 @@ include_directories(${SDL2_INCLUDE_DIRS} src)
 
 find_package(SDL2TTF REQUIRED)
 
-add_executable(SnakeGame src/main.cpp src/game.cpp src/controller.cpp src/renderer.cpp src/snake.cpp)
+add_executable(SnakeGame src/main.cpp src/game.cpp src/controller.cpp src/renderer.cpp src/snake.cpp src/player.cpp src/playersInfo.cpp)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
 target_link_libraries(SnakeGame ${SDL2_LIBRARIES} ${SDL2TTF_LIBRARY})

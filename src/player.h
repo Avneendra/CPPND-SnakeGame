@@ -9,12 +9,7 @@ class Player
     public:
     	//Initializes variables
     	Player(std::string &playerName,
-               unsigned int score) 
-        : _playerName(playerName),
-          _score(score)
-        {
-
-        }
+               unsigned int score);
 
     	std::string GetName() const { return _playerName; }
     	void SetName(std::string& playerName) 

@@ -4,7 +4,9 @@
 
 Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_width, std::size_t screen_height, std::string &playerName)
     : snake(grid_width, grid_height),
-      playerInfo(playerName, 0),
+      gridWidth(grid_width),
+      gridHeight(grid_height),
+      playerInfo(playerName),
       engine(dev()),
       random_w(0, static_cast<int>(screen_width/grid_width)),
       random_h(0, static_cast<int>(screen_height/grid_height)) {
@@ -24,7 +26,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
   std::string msg = "Hello, " + playerInfo.GetPlayerName() + "! Press Enter to start game, Esc to quit.";
   DisplayScreen(controller, renderer, msg, running, returnKey, target_frame_duration);
-  
+
   while (running) 
   {
     frame_start = SDL_GetTicks();
@@ -36,10 +38,20 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     if(!running || !snake.alive)
     {
-      msg = "Your score is " + std::to_string(GetScore()) + ".High score is 25 by sdhghjhjh. Press Enter to play again, Esc to quit.";
+      std::string name = "";
+      int highScore = 0;
+      playerInfo.GetHighScoreAndName(highScore, name);
+
+      msg = "Your score is " + std::to_string(GetScore()) + ".High score is " + std::to_string(highScore) + 
+            " by " + name + ". Press Enter to play again, Esc to quit.";
       returnKey = false;
       running = true;
       DisplayScreen(controller, renderer, msg, running, returnKey, target_frame_duration, 15);
+      
+      // Reset the attributes in Snake and playerInfo class
+      snake = Snake(gridWidth, gridHeight);
+      name = playerInfo.GetPlayerName();
+      playerInfo = PlayersInfo(name);
     }
 
     frame_end = SDL_GetTicks();
