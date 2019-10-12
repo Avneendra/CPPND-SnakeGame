@@ -1,6 +1,6 @@
 # CPPND: Capstone Snake Game
 
-This repo is an extension of starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). Features have been added to starter code such as taking user input, storing high score in a text file, ability to quit game or play again using keyboard input and displaying Welcome screen at game startup and exit screen when game ends, 
+This repo is an extension of starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). Features have been added to starter code such as taking user input, maintaining and storing highest score and scorer name in a text file, ability to quit game or play again using keyboard input and displaying Welcome screen at game startup and Exit screen when game ends, 
 
 <img src="snake_game.gif"/>
 
